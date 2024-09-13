@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the code
+      # Checkout the code from the myapp folder (root of your repository)
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -21,18 +21,15 @@ jobs:
         with:
           node-version: '16.x'
 
-      # Navigate into the myapp directory, install dependencies, and build the app
+      # Install dependencies and build the React app
       - name: Install dependencies and build React app
         run: |
-          cd myapp  # Navigate into your app folder
           npm install
           npm run build
 
       # List build folder contents (for debugging purposes)
       - name: List build folder contents
-        run: |
-          cd myapp/build
-          ls -la
+        run: ls -la ./build
 
       # Login to Azure using credentials stored in GitHub Secrets
       - name: Login to Azure
@@ -42,10 +39,9 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-
       # Deploy the app to Azure Web App
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'myWebAppReact'  # Replace with your Azure Web App name
-          package: myapp/build  # Deploy the build folder from the myapp directory
+          app-name: 'your-azure-app-name'  # Replace with your Azure Web App name
+          package: ./build  # The build folder contains the production-ready code
