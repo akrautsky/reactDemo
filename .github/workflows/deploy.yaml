@@ -10,8 +10,12 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
+    permissions:
+      id-token: write  # Add this line to grant permission for id-token
+      contents: read
+
     steps:
-      # Checkout the code from the myapp folder (root of your repository)
+      # Checkout the code from the repository
       - name: Checkout code
         uses: actions/checkout@v4
 
