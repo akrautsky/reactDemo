@@ -1,0 +1,51 @@
+name: Build and Deploy React App to Azure Web App
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Set up Node.js version (adjust if needed)
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+
+      # Navigate into the myapp directory, install dependencies, and build the app
+      - name: Install dependencies and build React app
+        run: |
+          cd myapp  # Navigate into your app folder
+          npm install
+          npm run build
+
+      # List build folder contents (for debugging purposes)
+      - name: List build folder contents
+        run: |
+          cd myapp/build
+          ls -la
+
+      # Login to Azure using credentials stored in GitHub Secrets
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+
+      # Deploy the app to Azure Web App
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'myWebAppReact'  # Replace with your Azure Web App name
+          package: myapp/build  # Deploy the build folder from the myapp directory
